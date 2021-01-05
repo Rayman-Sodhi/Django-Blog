@@ -1,0 +1,45 @@
+
+{% extends 'base.html' %}
+{% block content %}
+<h1>Post</h1>
+<ul>
+{% for post in object_list %}
+<li><a href="{% url 'detail' post.pk %}">
+       {{post.title}}-  </a>-{{post.author.last_name}}
+  {% if user.is_authenticated %}
+    {% if user.id == post.author.id %}
+
+   <small> <a href="{% url 'update_post' post.pk %}">(Edit)</a> <br/>
+ <a href="{% url 'delete_post' post.pk %}">(Delete)</a> </small> <br/>
+{% if post.header_image %}
+<img src="{{post.header_image.url}}" width="500" height="800"></br>
+{% endif %}
+    {% endif %}
+
+    {% endif %}
+    {{post.body}}</li>
+
+    <div class="card mb-3" >
+  <div class="row no-gutters">
+    <div class="col-md-2">
+      <img src="{{post.author.profile.profile_pic.url}}" width="70" height="50" class="rounded-circle">
+    </div>
+    <div class="col-md-10">
+      <div class="card-body">
+        <h5 class="card-title"> {{post.author.first_name}}
+{{post.author.last_name}}</h5>
+
+        <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+      </div>
+    </div>
+  </div>
+</div>
+<form action ="{% url 'like_post' post.pk %}"
+      method="POST">
+    {% csrf_token %}
+    <button type="submit", name="post_id",value="{{ post.id }}",class="btn btn-primary btn-sm" > Like</button>
+    {{total_likes}}
+</form>
+{% endfor %}
+</ul>
+ {% endblock %}
